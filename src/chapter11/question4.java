@@ -8,10 +8,13 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class question4 {
+    static int N;
+    static boolean [] used_coin;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
+        used_coin = new boolean[N];
         int [] coins = new int [N];
         for(int i=0;i<N;i++) {
             coins[i] = Integer.parseInt(st.nextToken());
