@@ -19,13 +19,15 @@ public class question4 {
         Arrays.sort(coins);
         int amount = 1;
         while(true) {
-
-            if(true) {
+            if(!match_amount(amount)) {
                 break;
             }
             amount++;
         }
-        System.out.println();
+        System.out.println(amount);
         br.close();
+    }
+    static boolean match_amount(int a) {
+        return true;
     }
 }
