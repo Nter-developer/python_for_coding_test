@@ -7,25 +7,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class question9 {
-    static int possible;
-    static String [] compression_list;
-    static String str;
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        str = br.readLine();
-        compression_list = new String [str.length()/2+1];
-        possible = str.length()/2+1;
-
-        for(int i=1;i<str.length()/2+1;i++) {
-            String s = str;
-            for(int j=0;j<str.length()-(i+j);j+=i) {
-                if(s.substring(j,j+i)==s.substring(j+i+1,j+2*i+1)) {
-
+        Solution s = new Solution();
+        System.out.println(s.solution("aabbaccc"));
+        br.close();
+    }
+}
+class Solution {
+    static String str;
+    static int min_length;
+    public int solution(String s) {
+        this.str = s;
+        min_length = str.length();
+        for(int i=1;i<=str.length()/2;i++) {
+            compression(i);
+        }
+        return min_length;
+    }
+    static void compression(int length) {
+        String [] comp_block = new String[str.length()/length+1];
+        int range = 0;
+        int index = 0;
+        while(true) {
+            comp_block[index] = str.substring(range, range+length>str.length()?str.length():range+length);
+            if(index!=0&&comp_block[index].equals(comp_block[index-1])) {
+                if(index>1&&comp_block[index-2].chars().allMatch(Character::isDigit)) {
+                    comp_block[index-1] = String.valueOf(Integer.parseInt(comp_block[index-2])+1);
+                    comp_block[index-2] = "";
+                }
+                else {
+                    comp_block[index-1] = "2";
                 }
             }
+            index++;
+            range+=length;
+            if(range>str.length()) {
+                break;
+            }
         }
-
-        System.out.println();
-        br.close();
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<comp_block.length;i++) {
+            sb.append(comp_block[i]);
+        }
+        min_length = Math.min(sb.length(), min_length);
     }
 }
