@@ -9,12 +9,12 @@ import java.util.List;
 public class question9 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        Solution s = new Solution();
+        Solution9 s = new Solution9();
         System.out.println(s.solution("aabbaccc"));
         br.close();
     }
 }
-class Solution {
+class Solution9 {
     static String str;
     static int min_length;
     public int solution(String s) {
