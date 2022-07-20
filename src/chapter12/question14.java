@@ -1,134 +1,146 @@
 package chapter12;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
 
 /*
-        M개의 치킨집 중에서 N개를 남긴다고 가정하면
-        (M-N)개의 치킨집을 제거하는 것과 같다
+    친구 a가 처리할 수 있는 weak[]들의 집합의 배열을 만든다
+    a는 걸을 수 있는 거리 d안에 한번에 들어갈 수 있는 weak[]들의 집합(1 to 2, 3to 4 ...)을 a라는 친구의 배열에 넣고
+    back tracking을 통해 모든 weak를 수리할 수 있는 최소의 조합을 찾는다??
+ */
 
-        M개의 치킨집 중 M-N개를 선택해서 제가한 뒤 결과값을 확인해보자자
-        */
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class question14 {
-    static int N, M;
-    static int [][] town;
-    static boolean [] visit;
-    static List<int []> chicken_list;
-    static List<int []> save_list;
-    static List<int []> house_list;
-    //boolean for print code
-    static boolean print = true;
-    public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        chicken_list = new ArrayList<>();
-        save_list = new ArrayList<>();
-        house_list = new ArrayList<>();
-        town = new int [N+1][N+1];
-        for(int i = 1; i<=N; i++) {
-            st = new StringTokenizer(br.readLine());
-            for(int j = 1; j<=N; j++) {
-                town[i][j] = Integer.parseInt(st.nextToken());
-                if(town[i][j]==2) {
-                    chicken_list.add(new int []{j,i});
-                }
-                else if(town[i][j]==1) {
-                    house_list.add(new int []{j,i});
-                }
-            }
-        }
-        /*
-        if(print) {
-            for(int i = 0; i<chicken_list.size(); i++) {
-                int [] temp = chicken_list.get(i);
-                System.out.println(temp[0] + ", " + temp[1]);
-            }
-        }
-        */
-        visit = new boolean [chicken_list.size()];
-        solution();
-        /*
-        if(print) {
-            for(int[] k: save_list) {
-                System.out.println(k[0]+","+k[1]);
-            }
-        }
-        */
-        System.out.println(get_distance());
-        br.close();
+    public static void main(String[] args) {
+        Solution14 s = new Solution14();
+        System.out.println(s.solution(12, new int [] {1, 3, 4, 9, 10}, new int [] {3, 5, 7}));
+
     }
-    static int solution() {
-        draw(0, M, visit);
-        return 0;
+}
+class Solution14 {
+    static final int cipher = 16;
+    static int n;
+    static int min_friends;
+    static int [] week, dist;
+    static int [][] cover_range;
+    public int solution(int n, int[] weak, int[] dist) {
+        this.n = n;
+        this.week = weak;
+        this.dist = dist;
+        boolean [] cover_friends = new boolean [dist.length];
+        boolean [] cover_weaks = new boolean [weak.length];
+        min_friends = dist.length;
+        cover_range = new int [dist.length][weak.length];
+        set_cover_range();
+        cover_weak_recursion(0, cover_friends, cover_weaks);
+        return min_friends;
     }
-    static void draw(int index, int s, boolean [] v) {
-        if(s==0) {
-            //System.out.println("case: d==0");
-            int [] temp = new int [3];
-            int j = 0;
-            for(int i=0;i<visit.length;i++) {
-                if(v[i]) {
-                    temp[j++] = i;
-                    if(j==3) {
-                        break;
+    static void set_cover_range() {
+        for(int i=0;i<dist.length;i++) {
+            for(int j=0;j<week.length;j++) {
+                int cover_weak;
+                if(dist[i]+week[j]<n) {
+                    cover_weak = j;
+                    for(int k=j;k<week.length;k++) {
+                        if(week[k]<=dist[i]+week[j]) {
+                            cover_weak = k;
+                        }
+                        else {
+                            break;
+                        }
                     }
                 }
+                else {
+                    //System.out.println("range over");
+                    cover_weak = week.length-1;
+                    for(int k=0;k<j;k++) {
+                        if(week[k]<=dist[i]+week[j]-n) {
+                            cover_weak = k;
+                        }
+                        else {
+                            break;
+                        }
+                    }
+                }
+                cover_range[i][j] = j*cipher + cover_weak;
+                //System.out.println("friend "+i+" can cover "+j+" to "+cover_weak);
             }
-            /*
-            for(int i=0;i<v.length;i++) {
-                System.out.print(v[i]+" ");
+        }
+    }
+
+    static int cover_weak_recursion(int s, boolean [] cover_friends, boolean [] cover_weaks) {
+        if(s == dist.length) {
+            System.out.println("s == dist.length");
+            return -1;
+        }
+        else if(cover_clear(cover_weaks)) {
+            int mf = 0;
+            System.out.println("cover_clear(cover_weaks)");
+            for(int i=0;i<cover_friends.length;i++) {
+                if(cover_friends[i]) {
+                    mf++;
+                    System.out.print(i+", ");
+                }
             }
             System.out.println();
-             */
-            save_list.add(temp);
-            return;
-        }
-        else if(index >= chicken_list.size()) {
-            //System.out.println("case: index == chicken_list.size()");
-            return;
+            if(min_friends>mf) {
+                min_friends = mf;
+            }
+            return min_friends;
         }
         else {
-            //System.out.println("case: else");
-            v[index] = true;
-            draw(index+1, s-1, v);
-            v[index] = false;
-            draw(index+1, s, v);
-        }
-    }
-    static int get_distance() {
-        int sum_min = 2*N*house_list.size();
-        int sum = 0;
-        int min = 0;
+            //System.out.println("else");
 
-        for(int i=0;i<save_list.size();i++) {
-            sum = 0;
-            for(int j=0;j<house_list.size();j++) {
-                min = 2*N;
-                for(int k=0;k<M;k++) {
-                    /*System.out.println("calc :"+house_list.get(j)[0]+" - " +chicken_list.get(save_list.get(i)[k])[0] +", "+
-                            house_list.get(j)[1] +" - " + chicken_list.get(save_list.get(i)[k])[1]); */
-                    int distance =
-                            (int)Math.abs(house_list.get(j)[0] - chicken_list.get(save_list.get(i)[k])[0]) +
-                            (int)Math.abs(house_list.get(j)[1] - chicken_list.get(save_list.get(i)[k])[1]);
-                    if(min>distance) {
-                        min = distance;
+            /*
+            for(int i=0;i<s;i++) {
+                if(!cover_friends[i]) {
+
+                }
+            }
+            */
+
+
+            cover_weak_recursion(s+1, cover_friends, cover_weaks);
+            cover_friends[s] = true;
+            for(int i=0;i<dist.length;i++) {
+                int range [] = cipher(cover_range[s][i]);
+                int to = range[0];
+                int from = range[1];
+                if(from<to) {
+                    for(int j=to;j<week.length;j++) {
+                        cover_weaks[j] = true;
+                    }
+                    for(int j=0;j<to;j++) {
+                        if(from>week[j]) {
+                            cover_weaks[j] = true;
+                        }
                     }
                 }
-                sum+=min;
-                //System.out.println("sum += "+min+" "+": "+sum);
+                else {
+                    //System.out.println(to+" "+from);
+                    for(int j=to;j<=from;j++) {
+                        cover_weaks[j] = true;
+                    }
+                }
+                //System.out.println("friend "+s+" to "+from);
+                cover_weak_recursion(s+1, cover_friends, cover_weaks);
             }
-            if(sum_min>sum) {
-                //System.out.println(sum+">"+min+"?");
-                sum_min = sum;
+            return -1;
+        }
+    }
+
+    static int [] cipher(int n) {
+        int [] temp = new int [] {n/16, n%16};
+        return temp;
+    }
+
+    static boolean cover_clear(boolean [] cover_weaks) {
+        for(int i = 0;i<cover_weaks.length;i++) {
+            if(!cover_weaks[i]) {
+                return false;
             }
         }
-        return sum_min;
+        return true;
     }
 }
