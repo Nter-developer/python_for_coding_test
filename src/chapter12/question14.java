@@ -92,13 +92,13 @@ class Solution14 {
         else {
             //System.out.println("else");
 
-            /*
+
             for(int i=0;i<s;i++) {
                 if(!cover_friends[i]) {
 
                 }
             }
-            */
+
 
 
             cover_weak_recursion(s+1, cover_friends, cover_weaks);

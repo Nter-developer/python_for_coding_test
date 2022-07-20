@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
         M개의 치킨집 중에서 N개를 남긴다고 가정하면
         (M-N)개의 치킨집을 제거하는 것과 같다
 
-        M개의 치킨집 중 M-N개를 선택해서 제가한 뒤 결과값을 확인해보자자
+        M개의 치킨집 중 M-N개를 선택해서 제거한 뒤 결과값을 확인해보자자
         */
 
 public class question13 {
