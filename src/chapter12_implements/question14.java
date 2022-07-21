@@ -1,4 +1,4 @@
-package chapter12;
+package chapter12_implements;
 
 
 /*
@@ -7,9 +7,6 @@ package chapter12;
     back tracking을 통해 모든 weak를 수리할 수 있는 최소의 조합을 찾는다??
  */
 
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class question14 {
     public static void main(String[] args) {

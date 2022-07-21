@@ -1,4 +1,4 @@
-package chapter11;
+package chapter11_greedy;
 
 import java.io.IOException;
 
